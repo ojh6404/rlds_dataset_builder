@@ -1,23 +1,22 @@
+#!/usr/bin/env python3
 from typing import Iterator, Tuple, Any
 
 import glob
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
-import tensorflow_hub as hub
 
 
 class ExampleDataset(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for example dataset."""
 
-    VERSION = tfds.core.Version('1.0.0')
+    VERSION = tfds.core.Version('0.0.1')
     RELEASE_NOTES = {
-      '1.0.0': 'Initial release.',
+      '0.0.1': 'Initial release.',
     }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._embed = hub.load("https://tfhub.dev/google/universal-sentence-encoder-large/5")
 
     def _info(self) -> tfds.core.DatasetInfo:
         """Dataset metadata (homepage, citation,...)."""
@@ -26,29 +25,23 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
                 'steps': tfds.features.Dataset({
                     'observation': tfds.features.FeaturesDict({
                         'image': tfds.features.Image(
-                            shape=(64, 64, 3),
+                            shape=(480, 640, 3),
                             dtype=np.uint8,
-                            encoding_format='png',
+                            encoding_format=None,
                             doc='Main camera RGB observation.',
                         ),
-                        'wrist_image': tfds.features.Image(
-                            shape=(64, 64, 3),
-                            dtype=np.uint8,
-                            encoding_format='png',
-                            doc='Wrist camera RGB observation.',
-                        ),
                         'state': tfds.features.Tensor(
-                            shape=(10,),
+                            shape=(4,),
                             dtype=np.float32,
-                            doc='Robot state, consists of [7x robot joint angles, '
-                                '2x gripper position, 1x door opening angle].',
+                            doc='Robot state, consists of [3x end effector pos, '
+                                '1x gripper command].',
                         )
                     }),
                     'action': tfds.features.Tensor(
-                        shape=(10,),
+                        shape=(4,),
                         dtype=np.float32,
-                        doc='Robot action, consists of [7x joint velocities, '
-                            '2x gripper velocities, 1x terminate episode].',
+                        doc='Robot action, consists of [3x end effector pos, '
+                            '1x gripper command].',
                     ),
                     'discount': tfds.features.Scalar(
                         dtype=np.float32,
@@ -69,15 +62,6 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
                     'is_terminal': tfds.features.Scalar(
                         dtype=np.bool_,
                         doc='True on last step of the episode if it is a terminal step, True for demos.'
-                    ),
-                    'language_instruction': tfds.features.Text(
-                        doc='Language Instruction.'
-                    ),
-                    'language_embedding': tfds.features.Tensor(
-                        shape=(512,),
-                        dtype=np.float32,
-                        doc='Kona language embedding. '
-                            'See https://tfhub.dev/google/universal-sentence-encoder-large/5'
                     ),
                 }),
                 'episode_metadata': tfds.features.FeaturesDict({
@@ -104,13 +88,10 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
             # assemble episode --> here we're assuming demos so we set reward to 1 at the end
             episode = []
             for i, step in enumerate(data):
-                # compute Kona language embedding
-                language_embedding = self._embed([step['language_instruction']])[0].numpy()
 
                 episode.append({
                     'observation': {
                         'image': step['image'],
-                        'wrist_image': step['wrist_image'],
                         'state': step['state'],
                     },
                     'action': step['action'],
@@ -119,8 +100,6 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
                     'is_first': i == 0,
                     'is_last': i == (len(data) - 1),
                     'is_terminal': i == (len(data) - 1),
-                    'language_instruction': step['language_instruction'],
-                    'language_embedding': language_embedding,
                 })
 
             # create output data sample
@@ -147,4 +126,3 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
         #         beam.Create(episode_paths)
         #         | beam.Map(_parse_example)
         # )
-

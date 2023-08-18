@@ -10,18 +10,23 @@ from PIL import Image
 #     'steps': tfds.features.Dataset({
 #         'observation': tfds.features.FeaturesDict({
 #             'image': tfds.features.Image(
-#                 shape=(128, 128, 3),
+#                 shape=(112, 112, 3),
 #                 dtype=np.uint8,
-#                 encoding_format='jpeg',
+#                 encoding_format='png',
 #                 doc='Main camera RGB observation.',
 #             ),
+#             'state': tfds.features.Tensor(
+#                 shape=(7,),
+#                 dtype=np.float32,
+#                 doc='Robot state, consists of [3x end effector pos, '
+#                     '3x robot rpy angles, 1x gripper position].',
+#             )
 #         }),
 #         'action': tfds.features.Tensor(
-#             shape=(8,),
+#             shape=(7,),
 #             dtype=np.float32,
-#             doc='Robot action, consists of [3x EEF position, '
-#                 '3x EEF orientation yaw/pitch/roll, 1x gripper open/close position, '
-#                 '1x terminate episode].',
+#             doc='Robot action, consists of [3x end effector pos, '
+#                 '3x robot rpy angles, 1x gripper open/close command].',
 #         ),
 #         'discount': tfds.features.Scalar(
 #             dtype=np.float32,
@@ -52,7 +57,13 @@ from PIL import Image
 #             doc='Kona language embedding. '
 #                 'See https://tfhub.dev/google/universal-sentence-encoder-large/5'
 #         ),
-#     })
+#     }),
+#     'episode_metadata': tfds.features.FeaturesDict({
+#         'file_path': tfds.features.Text(
+#             doc='Path to the original data file.'
+#         ),
+#     }),
+# }))
 ################################################################################################
 #                                                                                              #
 ################################################################################################
@@ -67,8 +78,7 @@ def transform_step(step: Dict[str, Any]) -> Dict[str, Any]:
         'observation': {
             'image': np.array(img),
         },
-        'action': np.concatenate(
-            [step['action'][:3], step['action'][5:8], step['action'][-2:]]),
+        'action': step['action'],
     }
 
     # copy over all other fields unchanged

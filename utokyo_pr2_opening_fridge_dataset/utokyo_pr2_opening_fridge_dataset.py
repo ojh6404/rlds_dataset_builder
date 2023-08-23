@@ -8,7 +8,7 @@ import tensorflow_datasets as tfds
 import tensorflow_hub as hub
 
 
-class FoldingClothDataset(tfds.core.GeneratorBasedBuilder):
+class UtokyoPr2OpeningFridgeDataset(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for example dataset."""
 
     VERSION = tfds.core.Version('1.0.0')
@@ -85,8 +85,10 @@ class FoldingClothDataset(tfds.core.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Define data splits."""
         return {
-            'train': self._generate_examples(path='data/train/episode_*.npy'),
-            'val': self._generate_examples(path='data/val/episode_*.npy'),
+            # 'train': self._generate_examples(path='data/train/episode_*.npy'),
+            # 'val': self._generate_examples(path='data/val/episode_*.npy'),
+            'train': self._generate_examples(path='data/*/train/episode_*.npy'),
+            'val': self._generate_examples(path='data/*/val/episode_*.npy'),
         }
 
     def _generate_examples(self, path) -> Iterator[Tuple[str, Any]]:
@@ -95,7 +97,7 @@ class FoldingClothDataset(tfds.core.GeneratorBasedBuilder):
         def _parse_example(episode_path):
             # load raw data --> this should change for your dataset
             data = np.load(episode_path, allow_pickle=True)     # this is a list of dicts in our case
-            language_instruction = "folding cloth"
+            language_instruction = episode_path.split('/')[1].replace('_', ' ')
 
             # assemble episode --> here we're assuming demos so we set reward to 1 at the end
             episode = []

@@ -1,14 +1,9 @@
 # RLDS Dataset Conversion
 
-This repo contains dataset conversion scripts for U-Tokyo PR2 datasets. This repo is fork of this [repository](https://github.com/kpertsch/rlds_dataset_builder.git)
+This repo contains dataset conversion scripts for U-Tokyo PR2 datasets. This repo is forked from this [repository](https://github.com/kpertsch/rlds_dataset_builder.git)
 
-you can download datasets from 
-utokyo_pr2_opening_fridge_dataset : [Link](https://drive.google.com/drive/folders/1CJPCU68s724kMmv9PTk0dm7mMBUwnp7h?usp=sharing)  
-
-utokyo_pr2_tabletop_manipulation_dataset : [Link](https://drive.google.com/drive/folders/1uO2BqtiY9nG_ptpyxIIiDIrI0G7i-iBU?usp=sharing) 
-
+you can download datasets [utokyo_pr2_opening_fridge_dataset](https://drive.google.com/drive/folders/1CJPCU68s724kMmv9PTk0dm7mMBUwnp7h?usp=sharing) and [utokyo_pr2_tabletop_manipulation_dataset](https://drive.google.com/drive/folders/1uO2BqtiY9nG_ptpyxIIiDIrI0G7i-iBU?usp=sharing) 
 or
-
 ```
 gdown https://drive.google.com/drive/folders/1CJPCU68s724kMmv9PTk0dm7mMBUwnp7h --folder # utokyo_pr2_opening_fridge_dataset
 gdown https://drive.google.com/drive/folders/1uO2BqtiY9nG_ptpyxIIiDIrI0G7i-iBU --folder # utokyo_pr2_tabletop_manipulation_dataset

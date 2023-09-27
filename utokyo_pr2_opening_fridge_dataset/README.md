@@ -1,5 +1,7 @@
-TODO(example_dataset): Markdown description of your dataset.
-Description is **formatted** as markdown.
+# U-Tokyo PR2 Opening Fridge Datasets
 
-It should also contain any processing which has been applied (if any),
-(e.g. corrupted example skipped, images cropped,...):
+you can download X-Embodiment:U-Tokyo PR2 Opening Fridge datasets [utokyo_pr2_opening_fridge_dataset](https://drive.google.com/drive/folders/1CJPCU68s724kMmv9PTk0dm7mMBUwnp7h?usp=sharing).
+or use gdown commands
+```
+gdown https://drive.google.com/drive/folders/1CJPCU68s724kMmv9PTk0dm7mMBUwnp7h --folder # utokyo_pr2_opening_fridge_dataset
+```
